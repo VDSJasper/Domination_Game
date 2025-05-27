@@ -7,7 +7,7 @@
         mc:Ignorable="d"
         Title="MainWindow" Height="550" Width="800">
     <DockPanel>
-        <Menu DockPanel.Dock="Top">
+        <Menu DockPanel.Dock="Top" Name="menuBar">
             <MenuItem Header="_Start A Game" Name="start" Click="MenuItem_Click"></MenuItem>
             <MenuItem Header="_Moves" Name="moves" Click="MenuItem_Click"></MenuItem>
             <MenuItem Header="_Exit" Name="exit" Click="MenuItem_Click"></MenuItem>
@@ -46,6 +46,19 @@
                     VerticalAlignment="Top"
                     Content="Y"
                     Name="gridY"></Label>
+
+            <Label Width="121" Height="38" 
+                    Margin="593,196,0,0" 
+                    HorizontalAlignment="Left" 
+                    VerticalAlignment="Top"
+                    Content="player's turn"
+                    Name="playerLabel"></Label>
+
+            <Label Width="49" Height="38" 
+                    Margin="544,196,0,0" 
+                    HorizontalAlignment="Left" 
+                    VerticalAlignment="Top"
+                    Name="playerToPlay"></Label>
         </Grid>
     </DockPanel>
 </Window>

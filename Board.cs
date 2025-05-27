@@ -41,10 +41,14 @@ namespace Domination_Game
                 for (int j = 0; j < 8; j++) 
                 {
                     Block block = new Block(i,j, this, canvas);
-                    _cells[i,j] = block;
+                    _cells[j,i] = block;
                 }
-
             }
+        }
+        public void PlaceTile(Block block1, Block block2, Color fillColor) 
+        {
+            block1.FillBlock(fillColor);
+            block2.FillBlock(fillColor);
         }
     }
 }

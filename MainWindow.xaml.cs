@@ -21,13 +21,18 @@ namespace Domination_Game
         private Point _mouseLocation;
         private int _x;
         private int _y;
-        private Block? _selectedBlock;
+        private string path = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments);
+        private string filePath;
         Game? _game;
+        MenuItem _movesItem;
 
         public MainWindow()
         {
             InitializeComponent();
-            
+            filePath = System.IO.Path.Combine(path, "domination.txt");
+            using StreamWriter writer = File.CreateText(filePath);
+            writer.WriteLine("All moves made this game:");
+            _movesItem = (MenuItem)menuBar.FindName("moves");
         }
 
         private void MenuItem_Click(object sender, RoutedEventArgs e)
@@ -38,8 +43,7 @@ namespace Domination_Game
                 switch (menuItem.Name)
                 {
                     case "start":
-                        canvas.Children.Clear();
-                        _game = new Game(_boardMargin, canvas);
+                        StartGame();
                         break;
                     case "moves":
                         ShowMoves();
@@ -51,16 +55,35 @@ namespace Domination_Game
             }
         }
 
-
+        private void StartGame()
+        {
+            canvas.Children.Clear();
+            _game = new Game(_boardMargin, canvas);
+            _game.GameWindow = this;
+            playerToPlay.Content = Convert.ToString(_game.CurrentPlayer);
+            _movesItem.IsEnabled = false;
+        }
 
         private void ShowMoves() 
         {
-            // Read File Stuff
+            MovesWindow _movesWindow = new MovesWindow(filePath);
+            _movesWindow.Show();
         }
 
-        private void AddMoves()
+        private void AddMoves(int x, int y, Players player)
         {
-            // WriteStream Stuff
+            int x2 = x;
+            int y2 = y;
+            if (player == Players.Red)
+            {
+                y2 = y++;
+            }
+            else if (player == Players.Blue)
+            {
+                x2 = x++;
+            }
+            using StreamWriter writer = File.AppendText(filePath);
+            writer.WriteLine($"{player}: X{x} Y{y} And X{x2} Y{y2}");
         }
 
         private void canvas_MouseMove(object sender, MouseEventArgs e)
@@ -78,11 +101,13 @@ namespace Domination_Game
                         if ((_mouseLocation.Y > _game.GameBoard.BoardMargin + (_game.GameBoard.BoardBlocks[i, j].CellSize * i))
                             && (_mouseLocation.Y < _game.GameBoard.BoardMargin + (_game.GameBoard.BoardBlocks[i, j].CellSize * (i + 1)))) 
                         {
+                            _y = i;
                             gridY.Content = "Y: " + i;
                         }
                         if    (_mouseLocation.X > _game.GameBoard.BoardMargin + (_game.GameBoard.BoardBlocks[i, j].CellSize * j)
                             && (_mouseLocation.X < _game.GameBoard.BoardMargin + (_game.GameBoard.BoardBlocks[i, j].CellSize * (j + 1))))
                         {
+                            _x = j;
                             gridX.Content = "X: " + j;
                         }
                     }
@@ -94,9 +119,19 @@ namespace Domination_Game
         {
             if (_game != null) 
             {
-                _selectedBlock = _game.GameBoard.BoardBlocks[_x,_y];
-                _game.TryPlaceTile(_selectedBlock);
+                bool tilePlaced = _game.TryPlaceTile(_x, _y);
+                playerToPlay.Content = Convert.ToString(_game.CurrentPlayer);
+                if (tilePlaced) 
+                {
+                    AddMoves(_x, _y, _game.CurrentPlayer);
+                    _game.NextPlayer();
+                }
             }
+        }
+
+        public void NoRunningGame() 
+        {
+            _movesItem.IsEnabled = true;
         }
     }
 }
