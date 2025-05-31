@@ -17,9 +17,9 @@ namespace Domination_Game
         public Players CurrentPlayer { get; private set; }
 
         public MainWindow? GameWindow { get; set; }
-        public Game(int margin, Canvas canvas) 
+        public Game(int margin, double width, double height) 
         {
-            _board = new Board(margin, canvas);
+            _board = new Board(margin, width, height);
             CurrentPlayer = Players.Red;
         }
 

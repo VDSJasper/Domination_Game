@@ -20,10 +20,10 @@ namespace Domination_Game
         public int BoardMargin { get; private set; }
         public Block[,] BoardBlocks { get => _cells; }
 
-        public Board(int margin, Canvas canvas) 
+        public Board(int margin, double width, double height) 
         {
-            BoardWidth = (int) (canvas.Width - (margin * 2));
-            BoardHeight = (int) (canvas.Height - (margin * 2));
+            BoardWidth = (int) (width - (margin * 2));
+            BoardHeight = (int) (height - (margin * 2));
             BoardMargin = margin;
 
             _rect = new Rectangle();
@@ -31,16 +31,15 @@ namespace Domination_Game
             _rect.Width = BoardWidth;
             _rect.Height = BoardHeight;
             _rect.Stroke = new SolidColorBrush(Colors.Black);
-            canvas.Children.Add(_rect);
-            CreateField(canvas);
+            CreateField();
         }
-        private void CreateField(Canvas canvas)
+        private void CreateField()
         {
             for (int i = 0; i < 8; i++)
             {
                 for (int j = 0; j < 8; j++) 
                 {
-                    Block block = new Block(i,j, this, canvas);
+                    Block block = new Block(i,j, this);
                     _cells[j,i] = block;
                 }
             }
@@ -49,6 +48,12 @@ namespace Domination_Game
         {
             block1.FillBlock(fillColor);
             block2.FillBlock(fillColor);
+        }
+
+        public Rectangle GetBoard(out Block[,] cells)
+        {
+            cells = _cells;
+            return _rect;
         }
     }
 }

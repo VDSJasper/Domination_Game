@@ -8,6 +8,7 @@ using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
+using System.Windows.Shapes;
 
 
 namespace Domination_Game
@@ -58,7 +59,13 @@ namespace Domination_Game
         private void StartGame()
         {
             canvas.Children.Clear();
-            _game = new Game(_boardMargin, canvas);
+            _game = new Game(_boardMargin, canvas.Width, canvas.Height);
+            Rectangle board = _game.GameBoard.GetBoard(out Block[,] cells);
+            canvas.Children.Add(board);
+            foreach (Block block in cells)
+            {
+                canvas.Children.Add(block.BlockImage);
+            }
             _game.GameWindow = this;
             playerToPlay.Content = Convert.ToString(_game.CurrentPlayer);
             _movesItem.IsEnabled = false;

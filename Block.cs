@@ -14,11 +14,11 @@ namespace Domination_Game
     {
         private SolidColorBrush _brush = new SolidColorBrush(Colors.Black);
         private Rectangle _rect;
-
+        public Rectangle BlockImage { get => _rect; }
         public Point BlockPosition { get; private set; }
         public int CellSize { get; private set; }
         public bool Occupied { get; private set; }
-        public Block(int xLocation, int yLocation, Board board, Canvas canvas) 
+        public Block(int xLocation, int yLocation, Board board) 
         {
             CellSize = board.BoardWidth / 8;
             int leftCorner = board.BoardMargin + (xLocation * CellSize);
@@ -33,7 +33,6 @@ namespace Domination_Game
                 Stroke = _brush,
                 StrokeThickness = 0.3
             };
-            canvas.Children.Add(_rect);
         }
 
         public void FillBlock(Color fillColor) 
