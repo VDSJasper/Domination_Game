@@ -12,9 +12,10 @@ namespace Domination_Game
 {
     internal class Board
     {
-        private Block[,] _cells = new Block[8,8];
         private Rectangle _rect;
-
+        private int _blocksPerRow = 8;
+        private Block[,] _cells;
+        public int BlocksPerRow { get; private set; }
         public int BoardWidth { get; private set; }
         public int BoardHeight { get; private set; }
         public int BoardMargin { get; private set; }
@@ -25,6 +26,8 @@ namespace Domination_Game
             BoardWidth = (int) (width - (margin * 2));
             BoardHeight = (int) (height - (margin * 2));
             BoardMargin = margin;
+            BlocksPerRow = _blocksPerRow;
+            _cells = new Block[BlocksPerRow, BlocksPerRow];
 
             _rect = new Rectangle();
             _rect.Margin = new Thickness(margin, margin, 0, 0);
@@ -35,9 +38,9 @@ namespace Domination_Game
         }
         private void CreateField()
         {
-            for (int i = 0; i < 8; i++)
+            for (int i = 0; i < BlocksPerRow; i++)
             {
-                for (int j = 0; j < 8; j++) 
+                for (int j = 0; j < BlocksPerRow; j++) 
                 {
                     Block block = new Block(i,j, this);
                     _cells[j,i] = block;

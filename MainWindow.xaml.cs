@@ -18,20 +18,20 @@ namespace Domination_Game
     /// </summary>
     public partial class MainWindow : Window
     {
-        private int _boardMargin = 5;
+        private const int _boardMargin = 5;
         private Point _mouseLocation;
         private int _x;
         private int _y;
-        private string path = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments);
-        private string filePath;
+        private string _path = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments);
+        private string _filePath;
         Game? _game;
         MenuItem _movesItem;
 
         public MainWindow()
         {
             InitializeComponent();
-            filePath = System.IO.Path.Combine(path, "domination.txt");
-            using StreamWriter writer = File.CreateText(filePath);
+            _filePath = System.IO.Path.Combine(_path, "domination.txt");
+            using StreamWriter writer = File.CreateText(_filePath);
             writer.WriteLine("All moves made this game:");
             _movesItem = (MenuItem)menuBar.FindName("moves");
         }
@@ -66,14 +66,13 @@ namespace Domination_Game
             {
                 canvas.Children.Add(block.BlockImage);
             }
-            _game.GameWindow = this;
             playerToPlay.Content = Convert.ToString(_game.CurrentPlayer);
             _movesItem.IsEnabled = false;
         }
 
         private void ShowMoves() 
         {
-            MovesWindow _movesWindow = new MovesWindow(filePath);
+            MovesWindow _movesWindow = new MovesWindow(_filePath);
             _movesWindow.Show();
         }
 
@@ -89,7 +88,7 @@ namespace Domination_Game
             {
                 x2 = x++;
             }
-            using StreamWriter writer = File.AppendText(filePath);
+            using StreamWriter writer = File.AppendText(_filePath);
             writer.WriteLine($"{player}: X{x} Y{y} And X{x2} Y{y2}");
         }
 
@@ -101,9 +100,9 @@ namespace Domination_Game
 
             if (_game != null)
             {
-                for (int i = 0; i < 8; i++)
+                for (int i = 0; i < _game.GameBoard.BlocksPerRow; i++)
                 {
-                    for (int j = 0; j < 8; j++)
+                    for (int j = 0; j < _game.GameBoard.BlocksPerRow; j++)
                     {
                         if ((_mouseLocation.Y > _game.GameBoard.BoardMargin + (_game.GameBoard.BoardBlocks[i, j].CellSize * i))
                             && (_mouseLocation.Y < _game.GameBoard.BoardMargin + (_game.GameBoard.BoardBlocks[i, j].CellSize * (i + 1)))) 
@@ -126,16 +125,34 @@ namespace Domination_Game
         {
             if (_game != null) 
             {
-                bool tilePlaced = _game.TryPlaceTile(_x, _y);
-                playerToPlay.Content = Convert.ToString(_game.CurrentPlayer);
-                if (tilePlaced) 
+                try
                 {
-                    AddMoves(_x, _y, _game.CurrentPlayer);
-                    _game.NextPlayer();
+                    bool tilePlaced = _game.TryPlaceTile(_x, _y);
+                    playerToPlay.Content = Convert.ToString(_game.CurrentPlayer);
+                    if (tilePlaced)
+                    {
+                        AddMoves(_x, _y, _game.CurrentPlayer);
+                        _game.NextPlayer();
+                        if (!_game.HasMovesLeft())
+                        {
+                            GameOver();
+                        }
+                    }
+                }
+                catch (DominationException moveException) 
+                {
+                    MessageBox.Show(moveException.Message);
                 }
             }
         }
 
+        private void GameOver()
+        {
+            if (_game.EndOfGame)
+            {
+                MessageBox.Show($"{_game.CurrentPlayer} has no more moves. Game over");
+            }
+        }
         public void NoRunningGame() 
         {
             _movesItem.IsEnabled = true;

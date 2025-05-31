@@ -15,10 +15,11 @@ namespace Domination_Game
         private Board _board;
         public Board GameBoard { get => _board; }
         public Players CurrentPlayer { get; private set; }
+        public bool EndOfGame { get; private set; }
 
-        public MainWindow? GameWindow { get; set; }
         public Game(int margin, double width, double height) 
         {
+            EndOfGame = false;
             _board = new Board(margin, width, height);
             CurrentPlayer = Players.Red;
         }
@@ -29,43 +30,38 @@ namespace Domination_Game
             {
                 Block block1 = _board.BoardBlocks[y, x];
                 Block block2;
-                bool possible = false;
+
                 if (!block1.Occupied)
                 {
                     if (CurrentPlayer == Players.Red)
                     {
-                        if ((y + 1 < 8) && !(_board.BoardBlocks[y + 1, x].Occupied))
+                        if ((y + 1 < _board.BlocksPerRow) && !(_board.BoardBlocks[y + 1, x].Occupied))
                         {
                             block2 = _board.BoardBlocks[y + 1, x];
                             _board.PlaceTile(block1, block2, Colors.Red);
-                            possible = true;
-                            return possible;
+                            return true;
                         }
                     }
                     if (CurrentPlayer == Players.Blue)
                     {
-                        if ((x + 1 < 8) && !(_board.BoardBlocks[y, x + 1].Occupied))
+                        if ((x + 1 < _board.BlocksPerRow) && !(_board.BoardBlocks[y, x + 1].Occupied))
                         {
                             block2 = _board.BoardBlocks[y, x + 1];
                             _board.PlaceTile(block1, block2, Colors.Blue);                           
-                            possible = true;
-                            return possible;
+                            return true;
                         }
                     }
                 }
-                if (!possible)
-                {
-                    throw new DominationException("Can't place this tile here.");
-                }
+                throw new DominationException("Can't place this tile here.");                
             }
             else 
             {
-                EndOfGame();
+                EndOfGame = true;
             }
             return false;
         }
 
-        private bool HasMovesLeft() 
+        public bool HasMovesLeft() 
         {
             int rowCounter;
             int colCounter;
@@ -103,6 +99,7 @@ namespace Domination_Game
                     }
                 }
             }
+            EndOfGame = true;
             return false;
         }
 
@@ -116,12 +113,6 @@ namespace Domination_Game
             {
                 CurrentPlayer = Players.Red;
             }
-        }
-
-        private void EndOfGame() 
-        {
-            GameWindow?.NoRunningGame();
-            MessageBox.Show($"{CurrentPlayer} has no more moves. Game over");
         }
     }    
 }

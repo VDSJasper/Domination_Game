@@ -20,7 +20,7 @@ namespace Domination_Game
         public bool Occupied { get; private set; }
         public Block(int xLocation, int yLocation, Board board) 
         {
-            CellSize = board.BoardWidth / 8;
+            CellSize = board.BoardWidth / board.BlocksPerRow;
             int leftCorner = board.BoardMargin + (xLocation * CellSize);
             int upperCorner = board.BoardMargin + (yLocation * CellSize);
             BlockPosition = new Point(leftCorner, upperCorner);

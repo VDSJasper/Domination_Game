@@ -11,7 +11,6 @@ namespace Domination_Game
     {
         public DominationException(string message):base(message) 
         { 
-            MessageBox.Show(message);
         }
     }
 }
